@@ -5,6 +5,8 @@
  */
 package com.adip.interfazsai;
 
+import com.adip.interfazsai.clientRest.RequestUtil;
+
 /**
  *
  * @author enrique
