@@ -6,6 +6,11 @@
 package com.adip.interfazsai;
 
 import com.adip.interfazsai.clientRest.RequestUtil;
+import com.adip.interfazsai.models.ErrorLogin;
+import com.adip.interfazsai.models.Token;
+import com.adip.interfazsai.models.User;
+import javax.swing.JOptionPane;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -99,12 +104,33 @@ public class Login extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         // TODO add your handling code here:
-        String user = userField.getText();
+        String username = userField.getText();
         char[] arrayPassword = passwordField.getPassword();
         String password = new String(arrayPassword);
-        System.out.println("User = " + user + "\nPassword = " + password);
-        RequestUtil request = new RequestUtil();
-        request.getEstados();
+        System.out.println("User = " + username + "\nPassword = " + password);
+        User user = new User(username, password);
+        RequestUtil request = new RequestUtil(false);
+        // request.getEstados();
+        Response response = request.login(user);
+        switch (response.getStatus()){
+            case 400:
+                System.out.println("No se encontro usuario");
+                JOptionPane.showMessageDialog(this, "Ingresa tu nombre de usuario y contraseña para poder acceder.");
+                break;
+            case 401:
+                 ErrorLogin error = response.readEntity(ErrorLogin.class);
+                System.out.println("error" + error.getDetail());
+                JOptionPane.showMessageDialog(this, error.getDetail());
+                break;
+            case 200:
+                Token token = response.readEntity(Token.class);
+                System.out.println("token " + token.getAccess());
+                System.out.println("refresh " + token.getRefresh());
+                this.setVisible(false);
+                Home homeView = new Home(token);
+                homeView.setVisible(true);
+                break;
+        }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     /**

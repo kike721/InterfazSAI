@@ -5,19 +5,36 @@
  */
 package com.adip.interfazsai;
 
+import com.adip.interfazsai.clientRest.RequestUtil;
+import com.adip.interfazsai.models.Boleta;
+import com.adip.interfazsai.models.Token;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JOptionPane;
+import javax.ws.rs.core.Response;
+import org.apache.storm.shade.org.apache.commons.codec.binary.Base64;
 
 /**
  *
  * @author enrique
  */
 public class Home extends javax.swing.JFrame {
+    Token webToken = null;
+    String path = "/home/enrique/Documentos/projects/freelance/InterfazSAI/files";
 
     /**
      * Creates new form Home
      */
     public Home() {
+        initComponents();
+    }
+    
+    public Home(Token token){
+        this.webToken = token;
         initComponents();
     }
 
@@ -114,11 +131,41 @@ public class Home extends javax.swing.JFrame {
 
     private void sendDocsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendDocsBtnActionPerformed
         // TODO add your handling code here:
-        Map<String,String> env = System.getenv();
+        System.out.println("token: " + this.webToken.getAccess());
+        String webToken = "Bearer " + this.webToken.getAccess();
+        RequestUtil clientWeb = new RequestUtil(true);
+        File folder = new File(this.path);
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isFile()) {
+                System.out.println("File= " + folder.getAbsolutePath()+ "\\" + fileEntry.getName());
+                /* Algoritmo para converision base64*/
+                Boleta boleta = new Boleta(fileEntry, fileEntry);
+                System.out.println("Objeto boleta" + boleta.getBoleta_anverso());
+                Response response = clientWeb.crearBoletas(boleta, webToken);
+                switch (response.getStatus()){
+                    case 400:
+                        String error4 = response.readEntity(String.class);
+                        System.out.println("error 400" + error4);
+                        JOptionPane.showMessageDialog(this, error4);
+                        break;
+                    case 401:
+                        String error = response.readEntity(String.class);
+                        System.out.println("error 401" + error);
+                        JOptionPane.showMessageDialog(this, error);
+                        break;
+                    case 200:
+                        System.out.println("Se agrego correctamente");
+                        break;
+                }
+            }
+        }
+        
+        /* Map<String,String> env = System.getenv();
         Set<String> keys = env.keySet();
         keys.stream().forEach((key) -> {
             System.out.println(key + " = "+env.get(key));
-        });
+        });*/
+        
     }//GEN-LAST:event_sendDocsBtnActionPerformed
 
     /**
