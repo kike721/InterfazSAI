@@ -7,11 +7,16 @@ package com.adip.interfazsai;
 
 import com.adip.interfazsai.clientRest.RequestUtil;
 import com.adip.interfazsai.models.Boleta;
+import com.adip.interfazsai.models.Lote;
 import com.adip.interfazsai.models.Token;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JOptionPane;
@@ -74,7 +79,7 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Lote");
+        jLabel1.setText("Nombre del lote");
 
         jLabel2.setText("# de documentos");
 
@@ -83,39 +88,31 @@ public class Home extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(177, 177, 177)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(68, 68, 68)
-                                .addComponent(loteField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(68, 68, 68)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel2))))
-                        .addGap(38, 38, 38)
-                        .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(100, 100, 100)
-                        .addComponent(jLabel1)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                    .addComponent(loteField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(33, 33, 33)
+                .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(135, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(93, 93, 93)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(128, 128, 128)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(loteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(119, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
 
         pack();
@@ -131,14 +128,70 @@ public class Home extends javax.swing.JFrame {
 
     private void sendDocsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendDocsBtnActionPerformed
         // TODO add your handling code here:
-        System.out.println("token: " + this.webToken.getAccess());
-        String webToken = "Bearer " + this.webToken.getAccess();
-        RequestUtil clientWeb = new RequestUtil(true);
+        String nameLote = loteField.getText();
+        int numDocs = Integer.parseInt(numDocsField.getText());
         File folder = new File(this.path);
-        for (final File fileEntry : folder.listFiles()) {
+        String[] nameFiles = folder.list();
+        List<String> nameFilesList = Arrays.asList(nameFiles);
+        Collections.sort(nameFilesList);
+        String webToken = "Bearer " + this.webToken.getAccess();
+        String dateEmision = "2019-12-09";
+        Lote lote = new Lote(nameLote, dateEmision, 1);
+        RequestUtil clientWebLote = new RequestUtil();
+        Response responseLote = clientWebLote.crearLote(lote, webToken);
+        Boolean sendDocuments = false;
+        switch (responseLote.getStatus()){
+            case 400:
+                String error4 = responseLote.readEntity(String.class);
+                System.out.println("error 400" + error4);
+                JOptionPane.showMessageDialog(this, error4);
+                break;
+            case 401:
+                String error = responseLote.readEntity(String.class);
+                System.out.println("error 401" + error);
+                JOptionPane.showMessageDialog(this, error);
+                break;
+            case 201:
+                System.out.println("Se agrego correctamente");
+                sendDocuments = true;
+                break;
+        }
+        if (nameFilesList.size() == numDocs * 2 && sendDocuments) {
+            RequestUtil clientWeb = new RequestUtil(true);
+            for (int i = 0; i < nameFilesList.size() - 1; i+=2) {
+                int j = i + 1;
+                File boletaAnverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(i));
+                File boletaReverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(j));
+                System.out.println("Boleta anverso " + boletaAnverso.getAbsolutePath());
+                System.out.println("Boleta reverso " + boletaReverso.getAbsolutePath());
+                Boleta boleta = new Boleta(boletaAnverso, boletaReverso);
+                Response response = clientWeb.crearBoletas(boleta, webToken);
+                switch (response.getStatus()){
+                    case 400:
+                        String error4 = response.readEntity(String.class);
+                        System.out.println("error 400" + error4);
+                        JOptionPane.showMessageDialog(this, error4);
+                        break;
+                    case 401:
+                        String error = response.readEntity(String.class);
+                        System.out.println("error 401" + error);
+                        JOptionPane.showMessageDialog(this, error);
+                        break;
+                    case 201:
+                        System.out.println("Se agrego correctamente");
+                        break;
+                }
+            }
+        } else {
+            if (nameFilesList.size() != numDocs * 2) {
+                JOptionPane.showMessageDialog(this, "No se escanearon completamente las boletas, favor de reintentar");
+            }
+        }
+        
+        /* File[] files = folder.listFiles();
+        for (final File fileEntry : files) {
             if (fileEntry.isFile()) {
                 System.out.println("File= " + folder.getAbsolutePath()+ "\\" + fileEntry.getName());
-                /* Algoritmo para converision base64*/
                 Boleta boleta = new Boleta(fileEntry, fileEntry);
                 System.out.println("Objeto boleta" + boleta.getBoleta_anverso());
                 Response response = clientWeb.crearBoletas(boleta, webToken);
@@ -158,7 +211,7 @@ public class Home extends javax.swing.JFrame {
                         break;
                 }
             }
-        }
+        }*/
         
         /* Map<String,String> env = System.getenv();
         Set<String> keys = env.keySet();
