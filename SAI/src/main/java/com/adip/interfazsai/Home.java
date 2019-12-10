@@ -59,6 +59,7 @@ public class Home extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         loteField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,47 +73,51 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
+        sendDocsBtn.setBackground(new java.awt.Color(72, 168, 62));
+        sendDocsBtn.setFont(new java.awt.Font("Open Sans", 1, 14)); // NOI18N
+        sendDocsBtn.setForeground(new java.awt.Color(255, 255, 255));
         sendDocsBtn.setText("Enviar Documentos");
+        sendDocsBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         sendDocsBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendDocsBtnActionPerformed(evt);
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Open Sans", 1, 14)); // NOI18N
         jLabel1.setText("Nombre del lote");
 
+        jLabel2.setFont(new java.awt.Font("Open Sans", 1, 14)); // NOI18N
         jLabel2.setText("# de documentos");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(177, 177, 177)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(loteField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(205, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2)
-                    .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
-                .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(135, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(loteField)
+                    .addComponent(numDocsField)
+                    .addComponent(sendDocsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
+                .addGap(176, 176, 176))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(128, 128, 128)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(loteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addGap(74, 74, 74)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loteField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addGap(12, 12, 12)
+                .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(141, Short.MAX_VALUE))
         );
 
         pack();
@@ -129,96 +134,91 @@ public class Home extends javax.swing.JFrame {
     private void sendDocsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendDocsBtnActionPerformed
         // TODO add your handling code here:
         String nameLote = loteField.getText();
-        int numDocs = Integer.parseInt(numDocsField.getText());
-        File folder = new File(this.path);
-        String[] nameFiles = folder.list();
-        List<String> nameFilesList = Arrays.asList(nameFiles);
-        Collections.sort(nameFilesList);
-        String webToken = "Bearer " + this.webToken.getAccess();
-        String dateEmision = "2019-12-09";
-        Lote lote = new Lote(nameLote, dateEmision, 1);
-        RequestUtil clientWebLote = new RequestUtil();
-        Response responseLote = clientWebLote.crearLote(lote, webToken);
-        Boolean sendDocuments = false;
-        switch (responseLote.getStatus()){
-            case 400:
-                String error4 = responseLote.readEntity(String.class);
-                System.out.println("error 400" + error4);
-                JOptionPane.showMessageDialog(this, error4);
-                break;
-            case 401:
-                String error = responseLote.readEntity(String.class);
-                System.out.println("error 401" + error);
-                JOptionPane.showMessageDialog(this, error);
-                break;
-            case 201:
-                System.out.println("Se agrego correctamente");
-                sendDocuments = true;
-                break;
-        }
-        if (nameFilesList.size() == numDocs * 2 && sendDocuments) {
-            RequestUtil clientWeb = new RequestUtil(true);
-            for (int i = 0; i < nameFilesList.size() - 1; i+=2) {
-                int j = i + 1;
-                File boletaAnverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(i));
-                File boletaReverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(j));
-                System.out.println("Boleta anverso " + boletaAnverso.getAbsolutePath());
-                System.out.println("Boleta reverso " + boletaReverso.getAbsolutePath());
-                Boleta boleta = new Boleta(boletaAnverso, boletaReverso);
-                Response response = clientWeb.crearBoletas(boleta, webToken);
-                switch (response.getStatus()){
+        String numDocsString = numDocsField.getText();
+        if (!numDocsString.equals("") && !nameLote.equals("")) {
+            int numDocs = Integer.parseInt(numDocsString);
+            File folder = new File(this.path);
+            String[] nameFiles = folder.list();
+            List<String> nameFilesList = Arrays.asList(nameFiles);
+            Collections.sort(nameFilesList);
+            String error = "";
+            if (nameFilesList.size() == numDocs * 2) {
+                String webToken = "Bearer " + this.webToken.getAccess();
+                String dateEmision = "2019-12-09";
+                Lote lote = new Lote(nameLote, dateEmision, 1);
+                RequestUtil clientWebLote = new RequestUtil();
+                Response responseLote = clientWebLote.crearLote(lote, webToken);
+                Boolean loteCreado = false;
+                switch (responseLote.getStatus()){
                     case 400:
-                        String error4 = response.readEntity(String.class);
-                        System.out.println("error 400" + error4);
-                        JOptionPane.showMessageDialog(this, error4);
+                        error = responseLote.readEntity(String.class);
+                        System.out.println("error 400" + error);
                         break;
                     case 401:
-                        String error = response.readEntity(String.class);
+                        error = responseLote.readEntity(String.class);
                         System.out.println("error 401" + error);
-                        JOptionPane.showMessageDialog(this, error);
                         break;
                     case 201:
-                        System.out.println("Se agrego correctamente");
+                        Lote loteResponse = responseLote.readEntity(Lote.class);
+                        System.out.println("Se agrego correctamente el lote: " + loteResponse.getId());
+                        loteCreado = true;
                         break;
                 }
+                if (loteCreado) {
+                    Boolean sendFiles = true;
+                    error = "";
+                    for (int i = 0; i < nameFilesList.size() - 1; i += 2) {
+                        RequestUtil clientWeb = new RequestUtil(true);
+                        int j = i + 1;
+                        File boletaAnverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(i));
+                        File boletaReverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(j));
+                        Boleta boleta = new Boleta(boletaAnverso, boletaReverso);
+                        Response response = clientWeb.crearBoletas(boleta, webToken);
+                        switch (response.getStatus()){
+                            case 400:
+                                error = response.readEntity(String.class);
+                                System.out.println("error 400" + error);
+                                sendFiles = false;
+                                break;
+                            case 401:
+                                error = response.readEntity(String.class);
+                                System.out.println("error 401" + error);
+                                sendFiles = false;
+                                break;
+                            case 201:
+                                boletaAnverso.delete();
+                                boletaReverso.delete();
+                                break;
+                        }
+                        if (!sendFiles) {
+                            break;
+                        }
+                    }
+                    if (sendFiles) {
+                        JOptionPane.showMessageDialog(this, "Se subieron correctamente los archivos");
+                    } else {
+                        // Hubo algun error en la carga de documentos
+                        JOptionPane.showMessageDialog(this, error);
+                    }
+                } else {
+                    // No se cre correctamente el lote
+                    JOptionPane.showMessageDialog(this, error);
+                }
+            } else {
+                if (nameFilesList.size() != numDocs * 2) {
+                    JOptionPane.showMessageDialog(this, "No se escanearon completamente las boletas, favor de reintentar");
+                }
             }
-        } else {
-            if (nameFilesList.size() != numDocs * 2) {
-                JOptionPane.showMessageDialog(this, "No se escanearon completamente las boletas, favor de reintentar");
+        } else { 
+            // Validaciones de formularios
+            if (nameLote.equals("")) {
+                JOptionPane.showMessageDialog(this, "Favor de ingresar el nombre del lote");
+            } else {
+                if (numDocsString.equals("")) {
+                    JOptionPane.showMessageDialog(this, "Favor de ingresar el numero de documentos que se van a escanear");
+                }
             }
         }
-        
-        /* File[] files = folder.listFiles();
-        for (final File fileEntry : files) {
-            if (fileEntry.isFile()) {
-                System.out.println("File= " + folder.getAbsolutePath()+ "\\" + fileEntry.getName());
-                Boleta boleta = new Boleta(fileEntry, fileEntry);
-                System.out.println("Objeto boleta" + boleta.getBoleta_anverso());
-                Response response = clientWeb.crearBoletas(boleta, webToken);
-                switch (response.getStatus()){
-                    case 400:
-                        String error4 = response.readEntity(String.class);
-                        System.out.println("error 400" + error4);
-                        JOptionPane.showMessageDialog(this, error4);
-                        break;
-                    case 401:
-                        String error = response.readEntity(String.class);
-                        System.out.println("error 401" + error);
-                        JOptionPane.showMessageDialog(this, error);
-                        break;
-                    case 200:
-                        System.out.println("Se agrego correctamente");
-                        break;
-                }
-            }
-        }*/
-        
-        /* Map<String,String> env = System.getenv();
-        Set<String> keys = env.keySet();
-        keys.stream().forEach((key) -> {
-            System.out.println(key + " = "+env.get(key));
-        });*/
-        
     }//GEN-LAST:event_sendDocsBtnActionPerformed
 
     /**
