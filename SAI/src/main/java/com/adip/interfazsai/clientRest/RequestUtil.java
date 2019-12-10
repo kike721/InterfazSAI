@@ -5,6 +5,7 @@
  */
 package com.adip.interfazsai.clientRest;
 import com.adip.interfazsai.models.Boleta;
+import com.adip.interfazsai.models.Lote;
 import com.adip.interfazsai.models.Token;
 import com.adip.interfazsai.models.User;
 import javax.ws.rs.client.Client;
@@ -119,6 +120,15 @@ public class RequestUtil {
                 .post(Entity.entity(multiPart, multiPart.getMediaType()));
         System.out.println("response.toString()" + response.getEntity());
         System.out.println("Status " + response.getStatus());
+        return response;
+    }
+    
+    public Response crearLote(Lote lote, String token) {
+        this.setTarget(client.target(this.getUrl() + "lote/"));
+        Response response = this.target
+                .request(MediaType.APPLICATION_JSON)
+                .header("Authorization", token)
+                .post(Entity.entity(lote, MediaType.APPLICATION_JSON));
         return response;
     }
     
