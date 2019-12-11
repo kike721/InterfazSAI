@@ -14,6 +14,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -26,7 +27,7 @@ public class RequestUtil {
     private Client client;
     private String url;
     private WebTarget target;
-    private MultiPart multiPart;
+    private FormDataMultiPart multiPart;
 
     public RequestUtil() {
         this.initialClient(false);
@@ -48,7 +49,7 @@ public class RequestUtil {
         return url;
     }
 
-    public MultiPart getMultiPart() {
+    public FormDataMultiPart getMultiPart() {
         return multiPart;
     }
 
@@ -64,7 +65,7 @@ public class RequestUtil {
         this.url = url;
     }
 
-    public void setMultiPart(MultiPart multiPart) {
+    public void setMultiPart(FormDataMultiPart multiPart) {
         this.multiPart = multiPart;
     }
     
@@ -72,25 +73,25 @@ public class RequestUtil {
         if (isMultiPart) {
             this.setClient(ClientBuilder.newBuilder()
             .register(MultiPartFeature.class).build());
-            MultiPart multiPart = new MultiPart();
+            FormDataMultiPart multiPart = new FormDataMultiPart();
             multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
             this.setMultiPart(multiPart);
         } else {
             this.setClient(ClientBuilder.newClient());
         }
-        
-        this.setUrl("http://localhost:8000/api/v1/");
-        // this.setUrl("http://localhost:8000/api/v1/estados/?format=json");
+        // Ambiente local
+        // this.setUrl("http://localhost:8000/api/v1/");
+        // Ambiente de pruebas
+        // this.setUrl("https://sai.adiphub.mx/api/v1/");
+        // Ambiente produccion
+        this.setUrl("https://sai.cdmx.gob.mx/api/v1/");
     }
     
     public void getEstados(String token) {
         this.setTarget(client.target(this.getUrl() + "estados/"));
-        // String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTc1ODQzODgyLCJqdGkiOiI3N2ZmYWYzNzU0MzE0NmEwOTVlNzVjOGE0ZGJiNzk3OCIsInVzZXJfaWQiOjF9.SXyNIbTxKHxHLWI5gEspbYpav1DHaiOT5fNu_86olnQ";
         Response response = this.target
                 .request(MediaType.APPLICATION_JSON)
                 .header("Authorization", token).get();
-        System.out.println("response.toString()" + response.getEntity());
-        System.out.println("Status " + response.getStatus());
     }
     
     public Response login(User user) {
@@ -98,12 +99,10 @@ public class RequestUtil {
         Response response = this.target
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(user, MediaType.APPLICATION_JSON));
-        System.out.println("response.toString()" + response.getEntity());
-        System.out.println("Status " + response.getStatus());
         return response;
     }
     
-    public Response crearBoletas(Boleta boleta, String token) {
+    public Response crearBoletas(Boleta boleta, Lote lote, String token) {
         this.setTarget(client.target(this.getUrl() + "boletas/"));
         FileDataBodyPart boleta_anverso = new FileDataBodyPart("boleta_anverso",
             boleta.getBoleta_anverso(),
@@ -111,15 +110,14 @@ public class RequestUtil {
         FileDataBodyPart boleta_reverso = new FileDataBodyPart("boleta_reverso",
             boleta.getBoleta_reverso(),
             MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        MultiPart multiPart = this.getMultiPart();
+        FormDataMultiPart multiPart = this.getMultiPart();
         multiPart.bodyPart(boleta_anverso);
         multiPart.bodyPart(boleta_reverso);
+        multiPart.field("lote", String.valueOf(lote.getId()));
         Response response = this.target
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Authorization", token)
                 .post(Entity.entity(multiPart, multiPart.getMediaType()));
-        System.out.println("response.toString()" + response.getEntity());
-        System.out.println("Status " + response.getStatus());
         return response;
     }
     

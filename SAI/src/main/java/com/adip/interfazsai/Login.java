@@ -97,6 +97,7 @@ public class Login extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userFieldActionPerformed
@@ -110,7 +111,6 @@ public class Login extends javax.swing.JFrame {
         String password = new String(arrayPassword);
         User user = new User(username, password);
         RequestUtil request = new RequestUtil(false);
-        // request.getEstados();
         Response response = request.login(user);
         switch (response.getStatus()){
             case 400:

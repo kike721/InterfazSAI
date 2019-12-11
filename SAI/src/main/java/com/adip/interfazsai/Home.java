@@ -29,7 +29,7 @@ import org.apache.storm.shade.org.apache.commons.codec.binary.Base64;
  */
 public class Home extends javax.swing.JFrame {
     Token webToken = null;
-    String path = "/home/enrique/Documentos/projects/freelance/InterfazSAI/files";
+    String path = System.getProperty("user.home") + "//files";
 
     /**
      * Creates new form Home
@@ -57,6 +57,13 @@ public class Home extends javax.swing.JFrame {
         sendDocsBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        dayField = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        monthField = new javax.swing.JComboBox();
+        jLabel6 = new javax.swing.JLabel();
+        yearField = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -90,37 +97,102 @@ public class Home extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Open Sans", 1, 14)); // NOI18N
         jLabel2.setText("# de documentos");
 
+        jLabel3.setFont(new java.awt.Font("Open Sans", 1, 14)); // NOI18N
+        jLabel3.setText("Fecha de Emision");
+
+        dayField.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        dayField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
+        dayField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dayFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        jLabel4.setText("Dia");
+
+        jLabel5.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        jLabel5.setText("Mes");
+
+        monthField.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        monthField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" }));
+        monthField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                monthFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        jLabel6.setText("Año");
+
+        yearField.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        yearField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2017", "2018", "2019", "2020" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(205, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(loteField)
-                    .addComponent(numDocsField)
-                    .addComponent(sendDocsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
-                .addGap(176, 176, 176))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(158, 158, 158)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(sendDocsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(loteField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addGap(57, 57, 57)
+                                        .addComponent(jLabel5))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(dayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(monthField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(28, 28, 28)
+                                        .addComponent(jLabel6))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(yearField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addGap(0, 89, Short.MAX_VALUE))
+                    .addComponent(numDocsField, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGap(175, 175, 175))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(74, 74, 74)
+                .addGap(51, 51, 51)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loteField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addGap(12, 12, 12)
-                .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6))
+                .addGap(7, 7, 7)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(monthField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(yearField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(numDocsField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
                 .addComponent(sendDocsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void loteFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loteFieldActionPerformed
@@ -144,11 +216,12 @@ public class Home extends javax.swing.JFrame {
             String error = "";
             if (nameFilesList.size() == numDocs * 2) {
                 String webToken = "Bearer " + this.webToken.getAccess();
-                String dateEmision = "2019-12-09";
+                String dateEmision = yearField.getSelectedItem().toString() + "-" + monthField.getSelectedItem().toString() + "-" + dayField.getSelectedItem().toString();
                 Lote lote = new Lote(nameLote, dateEmision, 1);
                 RequestUtil clientWebLote = new RequestUtil();
                 Response responseLote = clientWebLote.crearLote(lote, webToken);
                 Boolean loteCreado = false;
+                Lote loteResponse = new Lote();
                 switch (responseLote.getStatus()){
                     case 400:
                         error = responseLote.readEntity(String.class);
@@ -159,11 +232,15 @@ public class Home extends javax.swing.JFrame {
                         System.out.println("error 401" + error);
                         break;
                     case 201:
-                        Lote loteResponse = responseLote.readEntity(Lote.class);
+                        loteResponse = responseLote.readEntity(Lote.class);
                         System.out.println("Se agrego correctamente el lote: " + loteResponse.getId());
                         loteCreado = true;
                         break;
                 }
+                // Harcodeo para prod sin endpoint de Lote
+                /* Boolean loteCreado = true;
+                Lote loteResponse = new Lote(nameLote, dateEmision, 1);
+                loteResponse.setId(1); */
                 if (loteCreado) {
                     Boolean sendFiles = true;
                     error = "";
@@ -173,7 +250,7 @@ public class Home extends javax.swing.JFrame {
                         File boletaAnverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(i));
                         File boletaReverso = new File(folder.getAbsolutePath() + "//" + nameFilesList.get(j));
                         Boleta boleta = new Boleta(boletaAnverso, boletaReverso);
-                        Response response = clientWeb.crearBoletas(boleta, webToken);
+                        Response response = clientWeb.crearBoletas(boleta, loteResponse, webToken);
                         switch (response.getStatus()){
                             case 400:
                                 error = response.readEntity(String.class);
@@ -221,6 +298,14 @@ public class Home extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_sendDocsBtnActionPerformed
 
+    private void dayFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dayFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dayFieldActionPerformed
+
+    private void monthFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_monthFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_monthFieldActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -257,10 +342,17 @@ public class Home extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox dayField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField loteField;
+    private javax.swing.JComboBox monthField;
     private javax.swing.JTextField numDocsField;
     private javax.swing.JButton sendDocsBtn;
+    private javax.swing.JComboBox yearField;
     // End of variables declaration//GEN-END:variables
 }
