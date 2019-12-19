@@ -7,6 +7,7 @@ package com.adip.interfazsai;
 
 import com.adip.interfazsai.clientRest.RequestUtil;
 import com.adip.interfazsai.models.ErrorLogin;
+import com.adip.interfazsai.models.RespuestaLotes;
 import com.adip.interfazsai.models.Token;
 import com.adip.interfazsai.models.User;
 import javax.swing.JOptionPane;
@@ -117,14 +118,29 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Ingresa tu nombre de usuario y contraseña para poder acceder.");
                 break;
             case 401:
-                 ErrorLogin error = response.readEntity(ErrorLogin.class);
+                ErrorLogin error = response.readEntity(ErrorLogin.class);
                 JOptionPane.showMessageDialog(this, error.getDetail());
                 break;
             case 200:
                 Token token = response.readEntity(Token.class);
-                this.setVisible(false);
-                Home homeView = new Home(token);
-                homeView.setVisible(true);
+                RequestUtil requestLotes = new RequestUtil(false);
+                String webToken = "Bearer " + token.getAccess();
+                Response responseLotes = requestLotes.getLotes(webToken);
+                switch (responseLotes.getStatus()) {
+                    case 400:
+                        JOptionPane.showMessageDialog(this, "Ingresa tu nombre de usuario y contraseña para poder acceder.");
+                        break;
+                    case 401:
+                        error = responseLotes.readEntity(ErrorLogin.class);
+                        JOptionPane.showMessageDialog(this, error.getDetail());
+                        break;
+                    case 200:
+                        RespuestaLotes respuestaLotes = responseLotes.readEntity(RespuestaLotes.class);
+                        this.setVisible(false);
+                        Home homeView = new Home(token, respuestaLotes.getResults());
+                        homeView.setVisible(true);
+                        break;
+                }
                 break;
         }
     }//GEN-LAST:event_loginBtnActionPerformed

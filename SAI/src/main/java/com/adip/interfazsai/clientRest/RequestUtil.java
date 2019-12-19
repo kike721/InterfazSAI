@@ -130,4 +130,12 @@ public class RequestUtil {
         return response;
     }
     
+    public Response getLotes(String token) {
+        this.setTarget(client.target(this.getUrl() + "lote/?estatus=2"));
+        Response response = this.target
+                .request(MediaType.APPLICATION_JSON)
+                .header("Authorization", token).get();
+        return response;
+    }
+    
 }
